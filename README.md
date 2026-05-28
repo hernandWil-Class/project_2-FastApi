@@ -295,3 +295,60 @@ If Docker gives a permission error, use `sudo`:
 ```bash
 sudo docker compose up --build
 ```
+
+### Why Docker Compose Instead of Plain Docker?
+
+You can run this API with plain Docker, but the command is longer because you have to remember every option yourself.
+
+Plain Docker would look like this:
+
+```bash
+docker build -t fraud-scoring-api .
+docker run \
+  -p 8000:8000 \
+  -e FRAUD_API_ENVIRONMENT=docker \
+  -e FRAUD_API_ACCEPT_THRESHOLD=35 \
+  -e FRAUD_API_REJECT_THRESHOLD=70 \
+  fraud-scoring-api
+```
+
+Docker Compose puts those settings in `docker-compose.yml`, so the learner only needs:
+
+```bash
+docker compose up --build
+```
+
+For this project, Docker Compose is useful because it keeps the build instructions, port mapping, environment variables, and health check in one readable file. That is closer to how production services are usually described: the app code lives in Python files, the default runtime settings live in `config.yaml`, and the container runtime settings live in `docker-compose.yml`.
+
+### Why `8000:8000`?
+
+In `docker-compose.yml`, the API has this port mapping:
+
+```yaml
+ports:
+  - "8000:8000"
+```
+
+The format is:
+
+```text
+HOST_PORT:CONTAINER_PORT
+```
+
+For this project:
+
+- the FastAPI app runs inside the container on port `8000`
+- your browser or `curl` runs outside the container, on your machine
+- the left `8000` exposes the API on your machine at `http://localhost:8000`
+- the right `8000` points to the API port inside the container
+
+So `8000:8000` means: send traffic from `localhost:8000` on your machine to port `8000` inside the container.
+
+If the left side changed to `8080`, like `8080:8000`, you would open `http://localhost:8080`, but the app inside the container would still run on port `8000`.
+
+In short:
+
+- `Dockerfile` explains how to build the API image.
+- `docker run` starts one container, but the command can become long.
+- `docker-compose.yml` saves the run configuration in a file.
+- `docker compose up --build` builds and runs the service using that file.
