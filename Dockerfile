@@ -5,11 +5,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml ./
-RUN pip install --no-cache-dir ".[dev]"
-
 COPY app ./app
-COPY tests ./tests
+COPY pyproject.toml ./
+RUN pip install --no-cache-dir .
 
 EXPOSE 8000
 
