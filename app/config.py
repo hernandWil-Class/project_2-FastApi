@@ -1,7 +1,12 @@
 from functools import lru_cache
 
 from pydantic import Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+    YamlConfigSettingsSource,
+)
 
 
 class Settings(BaseSettings):
@@ -12,7 +17,29 @@ class Settings(BaseSettings):
     reject_threshold: int = Field(default=70, ge=0, le=100)
     log_level: str = "INFO"
 
-    model_config = SettingsConfigDict(env_prefix="FRAUD_API_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_prefix="FRAUD_API_",
+        env_file=".env",
+        yaml_file="config.yaml",
+        extra="ignore",
+    )
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
+        return (
+            init_settings,
+            env_settings,
+            dotenv_settings,
+            YamlConfigSettingsSource(settings_cls),
+            file_secret_settings,
+        )
 
 
 @lru_cache

@@ -1,0 +1,6 @@
+app_name: Real-Time Fraud Scoring API
+environment: local
+model_or_policy_version: policy-v1.0.0
+accept_threshold: 35
+reject_threshold: 70
+log_level: INFO

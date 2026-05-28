@@ -179,18 +179,73 @@ make sudo-docker-up
 
 ## Configuration
 
-Environment variables use the `FRAUD_API_` prefix.
+Runtime defaults are defined in `config.yaml`.
+
+```yaml
+app_name: Real-Time Fraud Scoring API
+environment: local
+model_or_policy_version: policy-v1.0.0
+accept_threshold: 35
+reject_threshold: 70
+log_level: INFO
+```
+
+The loader is defined in `app/config.py`. The `Settings` class uses Pydantic Settings and reads values in this order:
+
+1. values passed directly in Python, mostly useful in tests
+2. real environment variables
+3. local `.env` file values
+4. `config.yaml`
+5. Python field defaults
+
+For example, this field in `app/config.py`:
+
+```python
+accept_threshold: int = Field(default=35, ge=0, le=100)
+```
+
+can be overridden with:
+
+```bash
+FRAUD_API_ACCEPT_THRESHOLD=40
+```
+
+This means `config.yaml` is the readable baseline, and environment variables are the production-style override mechanism.
+
+Main environment variable overrides:
 
 - `FRAUD_API_ACCEPT_THRESHOLD`, default `35`
 - `FRAUD_API_REJECT_THRESHOLD`, default `70`
 - `FRAUD_API_MODEL_OR_POLICY_VERSION`, default `policy-v1.0.0`
 - `FRAUD_API_LOG_LEVEL`, default `INFO`
+- `FRAUD_API_ENVIRONMENT`, default `local`
 
-Docker Compose sets:
+For local development, edit `config.yaml` if you want to change the normal project defaults.
+
+For one-off experiments, export variables in your terminal:
+
+```bash
+FRAUD_API_ACCEPT_THRESHOLD=40 make run
+```
+
+For machine-specific local overrides, create a local `.env` file:
+
+```bash
+FRAUD_API_ENVIRONMENT=local
+FRAUD_API_ACCEPT_THRESHOLD=40
+FRAUD_API_REJECT_THRESHOLD=75
+FRAUD_API_LOG_LEVEL=INFO
+```
+
+Do not commit `.env`; it is ignored by Git.
+
+Docker Compose defines container-specific values in `docker-compose.yml`:
 
 - `FRAUD_API_ENVIRONMENT=docker`
 - `FRAUD_API_ACCEPT_THRESHOLD=35`
 - `FRAUD_API_REJECT_THRESHOLD=70`
+
+Those Docker Compose values override `config.yaml` inside the container.
 
 Decision logic:
 
@@ -211,6 +266,7 @@ app/
 tests/               Unit and integration tests
 Dockerfile           Container image definition
 docker-compose.yml   Local Docker Compose service
+config.yaml          Readable runtime defaults
 Makefile             Short commands for common tasks
 ```
 

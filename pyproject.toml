@@ -5,7 +5,8 @@ description = "Production-style FastAPI service for deterministic BNPL fraud sco
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.111.0",
-    "pydantic-settings>=2.2.1",
+    "pydantic-settings>=2.14.1",
+    "PyYAML>=6.0.0",
     "python-json-logger>=2.0.7",
     "uvicorn[standard]>=0.29.0",
 ]

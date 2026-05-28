@@ -7,6 +7,7 @@ WORKDIR /app
 
 COPY app ./app
 COPY pyproject.toml ./
+COPY config.yaml ./
 RUN pip install --no-cache-dir .
 
 EXPOSE 8000
