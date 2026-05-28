@@ -174,7 +174,6 @@ make lint
 make docker-up
 make docker-logs
 make docker-down
-make sudo-docker-up
 ```
 
 ## Configuration
@@ -189,6 +188,12 @@ accept_threshold: 35
 reject_threshold: 70
 log_level: INFO
 ```
+
+Decision logic:
+
+- scores below the accept threshold are accepted
+- scores from the accept threshold up to the reject threshold go to review
+- scores at or above the reject threshold are rejected
 
 The loader is defined in `app/config.py`. The `Settings` class uses Pydantic Settings and reads values in this order:
 
@@ -212,21 +217,7 @@ FRAUD_API_ACCEPT_THRESHOLD=40
 
 This means `config.yaml` is the readable baseline, and environment variables are the production-style override mechanism.
 
-Main environment variable overrides:
-
-- `FRAUD_API_ACCEPT_THRESHOLD`, default `35`
-- `FRAUD_API_REJECT_THRESHOLD`, default `70`
-- `FRAUD_API_MODEL_OR_POLICY_VERSION`, default `policy-v1.0.0`
-- `FRAUD_API_LOG_LEVEL`, default `INFO`
-- `FRAUD_API_ENVIRONMENT`, default `local`
-
 For local development, edit `config.yaml` if you want to change the normal project defaults.
-
-For one-off experiments, export variables in your terminal:
-
-```bash
-FRAUD_API_ACCEPT_THRESHOLD=40 make run
-```
 
 For machine-specific local overrides, create a local `.env` file:
 
@@ -247,11 +238,6 @@ Docker Compose defines container-specific values in `docker-compose.yml`:
 
 Those Docker Compose values override `config.yaml` inside the container.
 
-Decision logic:
-
-- scores below the accept threshold are accepted
-- scores from the accept threshold up to the reject threshold go to review
-- scores at or above the reject threshold are rejected
 
 ## Project Structure
 
@@ -269,24 +255,6 @@ docker-compose.yml   Local Docker Compose service
 config.yaml          Readable runtime defaults
 Makefile             Short commands for common tasks
 ```
-
-## Learning Order
-
-Open files in this order:
-
-1. `app/main.py`
-2. `app/schemas.py`
-3. `app/scoring.py`
-4. `app/config.py`
-5. `tests/`
-
-Suggested learning questions:
-
-- What fields does one transaction need?
-- Which fields increase the risk score?
-- Where are invalid requests rejected?
-- How does the API decide between `accept`, `review`, and `reject`?
-- Which tests prove the API works?
 
 ## Docker Compose
 
@@ -327,30 +295,3 @@ If Docker gives a permission error, use `sudo`:
 ```bash
 sudo docker compose up --build
 ```
-
-Or use the Make helper:
-
-```bash
-make sudo-docker-up
-```
-
-For a permanent fix, add your user to the Docker group and open a new terminal:
-
-```bash
-sudo usermod -aG docker "$USER"
-```
-
-After opening a new terminal, verify that Docker works without `sudo`:
-
-```bash
-docker ps
-docker compose up --build
-```
-
-If you see `unknown flag: --build`, your machine probably has Docker installed without the Compose v2 plugin. On Ubuntu, install it with:
-
-```bash
-sudo apt install docker-compose-v2
-```
-
-The warning `Docker Compose is configured to build using Bake, but buildx isn't installed` is not fatal. The image can still build successfully.

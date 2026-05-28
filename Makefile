@@ -1,4 +1,4 @@
-.PHONY: help install run test lint clean docker-build docker-up docker-down docker-logs docker-ps sudo-docker-up sudo-docker-down sudo-docker-logs sudo-docker-ps
+.PHONY: help install run test lint clean docker-build docker-up docker-down docker-logs docker-ps
 
 VENV := .venv
 PYTHON := $(VENV)/bin/python
@@ -17,7 +17,6 @@ help:
 	@echo "  make docker-down   Stop Docker Compose containers"
 	@echo "  make docker-logs   Follow Docker Compose logs"
 	@echo "  make docker-ps     Show Docker Compose container status"
-	@echo "  make sudo-docker-up Run Docker Compose with sudo if Docker permissions are not set"
 	@echo "  make clean         Remove local generated files"
 
 install:
@@ -51,15 +50,3 @@ docker-logs:
 
 docker-ps:
 	docker compose ps
-
-sudo-docker-up:
-	sudo docker compose up --build
-
-sudo-docker-down:
-	sudo docker compose down
-
-sudo-docker-logs:
-	sudo docker compose logs -f fraud-api
-
-sudo-docker-ps:
-	sudo docker compose ps
