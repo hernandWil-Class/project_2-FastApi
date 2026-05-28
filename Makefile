@@ -1,19 +1,28 @@
 .PHONY: install run test lint clean docker-build docker-up docker-down
 
+VENV := .venv
+PYTHON := $(VENV)/bin/python
+PIP := $(VENV)/bin/pip
+UVICORN := $(VENV)/bin/uvicorn
+PYTEST := $(VENV)/bin/pytest
+RUFF := $(VENV)/bin/ruff
+
 install:
-	pip install -e ".[dev]"
+	python3 -m venv $(VENV)
+	$(PIP) install --upgrade pip setuptools wheel
+	$(PIP) install -e ".[dev]"
 
 run:
-	uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+	$(UVICORN) app.main:app --reload --host 0.0.0.0 --port 8000
 
 test:
-	pytest
+	$(PYTEST)
 
 lint:
-	ruff check .
+	$(RUFF) check .
 
 clean:
-	rm -rf .venv __pycache__ .pytest_cache .ruff_cache .coverage htmlcov dist build *.egg-info .env
+	rm -rf $(VENV) __pycache__ .pytest_cache .ruff_cache .coverage htmlcov dist build *.egg-info .env
 
 docker-build:
 	docker build -t fraud-scoring-api .

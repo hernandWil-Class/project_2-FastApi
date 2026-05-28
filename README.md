@@ -16,6 +16,8 @@ make install
 make run
 ```
 
+This creates a local `.venv` virtual environment and installs the project dependencies there.
+
 Open API docs at `http://localhost:8000/docs`.
 
 ## Example Request
