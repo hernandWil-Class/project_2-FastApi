@@ -1,0 +1,14 @@
+services:
+  fraud-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      FRAUD_API_ENVIRONMENT: docker
+      FRAUD_API_ACCEPT_THRESHOLD: 35
+      FRAUD_API_REJECT_THRESHOLD: 70
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
