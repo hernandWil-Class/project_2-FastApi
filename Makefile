@@ -34,7 +34,7 @@ lint:
 	$(RUFF) check .
 
 clean:
-	rm -rf $(VENV) __pycache__ .pytest_cache .ruff_cache .coverage htmlcov dist build *.egg-info .env
+	rm -rf $(VENV) __pycache__ .pytest_cache .ruff_cache .agents .codex .vscode .coverage htmlcov dist build *.egg-info .env
 
 docker-build:
 	docker build -t fraud-scoring-api .
