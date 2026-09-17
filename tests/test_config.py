@@ -6,6 +6,8 @@ def test_settings_can_read_config_yaml(tmp_path, monkeypatch):
     tmp_path.joinpath("config.yaml").write_text(
         "\n".join(
             [
+                "app_version: 0.2.0",
+                "app_description: Test API description",
                 "environment: test-yaml",
                 "accept_threshold: 20",
                 "reject_threshold: 80",
@@ -15,6 +17,8 @@ def test_settings_can_read_config_yaml(tmp_path, monkeypatch):
 
     settings = Settings()
 
+    assert settings.app_version == "0.2.0"
+    assert settings.app_description == "Test API description"
     assert settings.environment == "test-yaml"
     assert settings.accept_threshold == 20
     assert settings.reject_threshold == 80
