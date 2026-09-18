@@ -1,4 +1,6 @@
 app_name: Real-Time Fraud Scoring API
+app_version: 0.1.0
+app_description: Low-latency deterministic fraud scoring API for BNPL checkout decisions.
 environment: local
 model_or_policy_version: policy-v1.0.0
 accept_threshold: 35

@@ -320,19 +320,11 @@ docker compose up --build
 
 For this project, Docker Compose is useful because it keeps the build instructions, port mapping, environment variables, and health check in one readable file. That is closer to how production services are usually described: the app code lives in Python files, the default runtime settings live in `config.yaml`, and the container runtime settings live in `docker-compose.yml`.
 
-### Why `8000:8000`?
-
 In `docker-compose.yml`, the API has this port mapping:
 
 ```yaml
 ports:
   - "8000:8000"
-```
-
-The format is:
-
-```text
-HOST_PORT:CONTAINER_PORT
 ```
 
 For this project:
@@ -345,10 +337,3 @@ For this project:
 So `8000:8000` means: send traffic from `localhost:8000` on your machine to port `8000` inside the container.
 
 If the left side changed to `8080`, like `8080:8000`, you would open `http://localhost:8080`, but the app inside the container would still run on port `8000`.
-
-In short:
-
-- `Dockerfile` explains how to build the API image.
-- `docker run` starts one container, but the command can become long.
-- `docker-compose.yml` saves the run configuration in a file.
-- `docker compose up --build` builds and runs the service using that file.

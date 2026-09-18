@@ -22,8 +22,8 @@ configure_logging(settings.log_level)
 
 app = FastAPI(
     title=settings.app_name,
-    version="0.1.0",
-    description="Low-latency deterministic fraud scoring API for BNPL checkout decisions.",
+    version=settings.app_version,
+    description=settings.app_description,
 )
 app.add_middleware(RequestContextMiddleware)
 
@@ -57,6 +57,11 @@ async def health() -> dict[str, str]:
         "environment": settings.environment,
         "model_or_policy_version": settings.model_or_policy_version,
     }
+
+
+@app.get("/version")
+async def version() -> dict[str, str]:
+    return {"model_or_policy_version": settings.model_or_policy_version}
 
 
 @app.post("/score", response_model=ScoreResponse)

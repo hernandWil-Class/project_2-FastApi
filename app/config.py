@@ -11,6 +11,10 @@ from pydantic_settings import (
 
 class Settings(BaseSettings):
     app_name: str = "Real-Time Fraud Scoring API"
+    app_version: str = "0.1.0"
+    app_description: str = (
+        "Low-latency deterministic fraud scoring API for BNPL checkout decisions."
+    )
     environment: str = "local"
     model_or_policy_version: str = "policy-v1.0.0"
     accept_threshold: int = Field(default=35, ge=0, le=100)
